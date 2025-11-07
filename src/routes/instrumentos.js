@@ -15,36 +15,31 @@ router.get('/', async (req, res) => {
 })
 
 // Obtener un instrumento por ID
-router.get('/:id', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const [rows] = await pool.query(
-      'SELECT * FROM Instrumentos WHERE id_instrumento = ?',
-      [req.params.id]
-    )
-    if (rows.length === 0) return res.status(404).json({ error: 'Instrumento no encontrado' })
-    res.json(rows[0])
+    const [rows] = await pool.query('SELECT * FROM Instrumentos')
+    res.json(rows)
   } catch (err) {
-    console.error('Error al buscar instrumento:', err)
-    res.status(500).json({ error: 'Error del servidor' })
+    console.error('❌ Error al obtener instrumentos:', err)
+    res.status(500).json({ error: 'Error del servidor', detalle: err.message })
   }
 })
+
 
 // Agregar un nuevo instrumento
 router.post('/', async (req, res) => {
   try {
     const { nombre, tipo, precio, stock, id_proveedor } = req.body
-    if (!nombre || !tipo || !precio || !id_proveedor)
-      return res.status(400).json({ error: 'Faltan datos obligatorios' })
 
     const [result] = await pool.query(
       'INSERT INTO Instrumentos (nombre, tipo, precio, stock, id_proveedor) VALUES (?, ?, ?, ?, ?)',
-      [nombre, tipo, precio, stock || 0, id_proveedor]
+      [nombre, tipo, precio, stock, id_proveedor]
     )
 
-    res.status(201).json({ message: 'Instrumento agregado', id: result.insertId })
+    res.json({ message: 'Instrumento agregado', id: result.insertId })
   } catch (err) {
-    console.error('Error al agregar instrumento:', err)
-    res.status(500).json({ error: 'Error del servidor' })
+    console.error('❌ Error al agregar instrumento:', err)
+    res.status(500).json({ error: 'Error del servidor', detalle: err.message })
   }
 })
 
