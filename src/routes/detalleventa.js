@@ -2,7 +2,6 @@ import express from 'express'
 import { pool } from '../db.js'
 
 const router = express.Router()
-
 // ✅ Obtener todos los detalles de venta
 router.get('/', async (req, res) => {
   try {

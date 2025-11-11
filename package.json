@@ -1,5 +1,4 @@
 {
-  
   "name": "api-inventario",
   "version": "1.0.0",
   "description": "API para el sistema de inventario de Melodía Instrumental",
@@ -13,9 +12,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.15.3"
   },
   "devDependencies": {
@@ -24,4 +25,3 @@
   "json.schemas": [],
   "json.validate.enable": false
 }
-
