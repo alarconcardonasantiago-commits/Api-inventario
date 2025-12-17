@@ -23,5 +23,13 @@
     "nodemon": "^3.1.0"
   },
   "json.schemas": [],
-  "json.validate.enable": false
+  "json.validate.enable": false,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alarconcardonasantiago-commits/Api-inventario.git"
+  },
+  "bugs": {
+    "url": "https://github.com/alarconcardonasantiago-commits/Api-inventario/issues"
+  },
+  "homepage": "https://github.com/alarconcardonasantiago-commits/Api-inventario#readme"
 }
