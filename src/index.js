@@ -7,6 +7,7 @@ import pedidosRoutes from './routes/pedidos.js'
 import ventasRoutes from './routes/ventas.js'
 import detalleVentaRoutes from './routes/detalleventa.js'
 import authRoutes from './routes/auth.js'
+import usuariosRoutes from './routes/usuarios.js'
 
 const app = express()
 app.use(cors())
@@ -19,6 +20,7 @@ app.use('/api/productos', productosRoutes)
 app.use('/api/ventas', ventasRoutes)
 app.use('/api/detalleventa', detalleVentaRoutes)
 app.use('/api/auth', authRoutes)
+app.use('/api/usuarios', usuariosRoutes)
 
 app.listen(3000, () => {
   console.log('Servidor corriendo en http://localhost:3000')
