@@ -1,5 +1,8 @@
 import jwt from 'jsonwebtoken'
-// dotenv ya fue cargado en index.js
+import dotenv from 'dotenv'
+
+// En ESM los imports se resuelven antes que el cuerpo de index.js
+dotenv.config()
 // ✅ Middleware para verificar token JWT
 export const verifyToken = (req, res, next) => {
   try {

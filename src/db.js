@@ -1,5 +1,8 @@
 import mysql from 'mysql2/promise'
-// dotenv ya fue cargado en index.js, no repetir aquí
+import dotenv from 'dotenv'
+
+// En ESM cada módulo que lee process.env al cargarse debe llamar dotenv.config()
+dotenv.config()
 
 export const pool = mysql.createPool({
   host: process.env.DB_HOST,

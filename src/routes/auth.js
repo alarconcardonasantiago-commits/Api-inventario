@@ -2,13 +2,13 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { pool } from '../db.js'
-// dotenv ya fue cargado en index.js
+import dotenv from 'dotenv'
+
+// En ESM los imports se resuelven antes que el cuerpo de index.js,
+// así que cada módulo que use process.env debe llamar dotenv.config()
+dotenv.config()
 
 const router = express.Router()
-
-// ✅ Clave secreta para JWT — debe estar definida en variables de entorno
-const JWT_SECRET = process.env.JWT_SECRET
-if (!JWT_SECRET) throw new Error('JWT_SECRET no está definido en las variables de entorno')
 
 // ✅ Registro de nuevo usuario
 router.post('/register', async (req, res) => {
@@ -53,10 +53,13 @@ router.post('/login', async (req, res) => {
     if (!passwordValida) return res.status(401).json({ error: 'Contraseña incorrecta' })
 
     // Crear token JWT
+    const JWT_SECRET = process.env.JWT_SECRET
+    if (!JWT_SECRET) return res.status(500).json({ error: 'JWT_SECRET no configurado en el servidor' })
+
     const token = jwt.sign(
       { id_usuario: usuario.id_usuario, rol: usuario.rol },
       JWT_SECRET,
-      { expiresIn: '2h' } // duración del token
+      { expiresIn: '2h' }
     )
 
     res.json({
