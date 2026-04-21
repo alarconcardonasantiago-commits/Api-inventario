@@ -1,7 +1,5 @@
 import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
-
-dotenv.config()
+// dotenv ya fue cargado en index.js
 // ✅ Middleware para verificar token JWT
 export const verifyToken = (req, res, next) => {
   try {

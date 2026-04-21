@@ -2,13 +2,13 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { pool } from '../db.js'
-import dotenv from 'dotenv'
+// dotenv ya fue cargado en index.js
 
-dotenv.config()
 const router = express.Router()
 
-// 🧩 Clave secreta para JWT
-const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_super_segura'
+// ✅ Clave secreta para JWT — debe estar definida en variables de entorno
+const JWT_SECRET = process.env.JWT_SECRET
+if (!JWT_SECRET) throw new Error('JWT_SECRET no está definido en las variables de entorno')
 
 // ✅ Registro de nuevo usuario
 router.post('/register', async (req, res) => {
