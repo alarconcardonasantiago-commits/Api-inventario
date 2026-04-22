@@ -1,16 +1,21 @@
 import mysql from 'mysql2/promise'
 import dotenv from 'dotenv'
 
-// En ESM cada módulo que lee process.env al cargarse debe llamar dotenv.config()
+// Carga las variables de entorno
 dotenv.config()
 
 export const pool = mysql.createPool({
   host: process.env.DB_HOST,
-  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306, // ✅ Puerto para Railway
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
+  // Aiven suele usar puertos como 12105 o 24802, asegúrate de que coincida
+  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 12105, 
+  user: process.env.DB_USER || 'avnadmin',
+  password: process.env.DB_PASSWORD,// Verifica si en tu código usas DB_PASS o DB_PASSWORD
+  database: process.env.DB_NAME || 'melodiainstrumental',
   waitForConnections: true,
   connectionLimit: 10,
-  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined // ✅ SSL opcional para Railway
+  queueLimit: 0,
+  // CRÍTICO PARA AIVEN: El plan gratuito exige SSL siempre
+  ssl: {
+    ca: fs.readFileSync('"C:\Users\User\Downloads\ca.pem"') // Ruta al certificado ca.pem
+  }
 })
