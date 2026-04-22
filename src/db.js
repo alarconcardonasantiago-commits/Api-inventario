@@ -17,3 +17,14 @@ export const pool = mysql.createPool({
     rejectUnauthorized: false
   }
 });
+
+// export const pool = mysql.createPool({
+//   host: process.env.DB_HOST,
+//   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 12105,
+//   user: process.env.DB_USER || 'avnadmin',
+//   password: process.env.DB_PASSWORD, // <--- ASEGÚRATE QUE AQUÍ DIGA PASSWORD
+//   database: process.env.DB_NAME || 'melodiainstrumental',
+//   ssl: {
+//     rejectUnauthorized: false 
+//   }
+// });

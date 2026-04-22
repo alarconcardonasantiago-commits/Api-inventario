@@ -19,6 +19,7 @@ const app = express()
 // ✅ CORS configurado para producción y desarrollo
 const allowedOrigins = [
   process.env.FRONTEND_URL,    // URL de Vercel en producción
+  'https://react-proyect-sena-adso.vercel.app',  // Creado directamente como respaldo seguro
   'http://localhost:5173',     // Vite dev server
   'http://localhost:3000',     // Fallback local
 ].filter(Boolean)
