@@ -7,6 +7,25 @@ const router = express.Router()
 //Obtener todos los productos (público)
 router.get('/', async (req, res) => {
   try {
+    const page = req.query.page ? parseInt(req.query.page) : null
+    const limit = req.query.limit ? parseInt(req.query.limit) : null
+
+    if (page && limit) {
+      const offset = (page - 1) * limit
+      const [totalRows] = await pool.query('SELECT COUNT(*) as total FROM productos')
+      const total = totalRows[0].total
+      const totalPages = Math.ceil(total / limit)
+      const [rows] = await pool.query('SELECT * FROM productos LIMIT ? OFFSET ?', [limit, offset])
+      
+      return res.json({
+        datos: rows,
+        total,
+        totalPages,
+        currentPage: page
+      })
+    }
+
+    // Comportamiento original si no hay paginación
     const [rows] = await pool.query('SELECT * FROM productos')
     res.json(rows)
   } catch (err) {
@@ -18,39 +37,70 @@ router.get('/', async (req, res) => {
 //buscar productos por nombre o tipo (insensible a mayúsculas)
 router.get('/buscar', async (req, res) => {
   try {
-    let { nombre, tipo } = req.query
+    let { nombre, tipo, page, limit } = req.query
 
     // Normalizar valores (eliminar espacios y pasar a minúsculas)
     nombre = nombre ? nombre.trim().toLowerCase() : null
     tipo = tipo ? tipo.trim().toLowerCase() : null
+    
+    const isPaginated = page && limit
+    const pageNum = isPaginated ? parseInt(page) : 1
+    const limitNum = isPaginated ? parseInt(limit) : null
+    const offset = isPaginated ? (pageNum - 1) * limitNum : 0
 
-    // Si no hay filtros, devolver todos los productos
+    // Si no hay filtros de búsqueda
     if (!nombre && !tipo) {
-      const [rows] = await pool.query('SELECT * FROM productos')
-      return res.json(rows)
+      if (isPaginated) {
+        const [totalRows] = await pool.query('SELECT COUNT(*) as total FROM productos')
+        const total = totalRows[0].total
+        const totalPages = Math.ceil(total / limitNum)
+        const [rows] = await pool.query('SELECT * FROM productos LIMIT ? OFFSET ?', [limitNum, offset])
+        return res.json({ datos: rows, total, totalPages, currentPage: pageNum })
+      } else {
+        const [rows] = await pool.query('SELECT * FROM productos')
+        return res.json(rows)
+      }
     }
 
     // Consulta dinámica
-    let query = 'SELECT * FROM productos WHERE 1=1'
+    let queryBase = 'FROM productos WHERE 1=1'
     const params = []
 
     if (nombre) {
-      query += ' AND LOWER(nombre) LIKE ?'
+      queryBase += ' AND LOWER(nombre) LIKE ?'
       params.push(`%${nombre}%`)
     }
 
     if (tipo) {
-      query += ' AND LOWER(tipo) LIKE ?'
+      queryBase += ' AND LOWER(tipo) LIKE ?'
       params.push(`%${tipo}%`)
     }
 
-    const [rows] = await pool.query(query, params)
+    if (isPaginated) {
+      // Primero obtener el conteo total para la paginación
+      const [totalRows] = await pool.query(`SELECT COUNT(*) as total ${queryBase}`, params)
+      const total = totalRows[0].total
+      const totalPages = Math.ceil(total / limitNum)
 
-    if (rows.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron productos con esos criterios' })
+      // Luego obtener los datos paginados
+      const [rows] = await pool.query(`SELECT * ${queryBase} LIMIT ? OFFSET ?`, [...params, limitNum, offset])
+      
+      return res.json({
+        datos: rows,
+        total,
+        totalPages,
+        currentPage: pageNum
+      })
+    } else {
+      // Búsqueda sin paginar (comportamiento original)
+      const [rows] = await pool.query(`SELECT * ${queryBase}`, params)
+      
+      if (rows.length === 0) {
+        return res.status(404).json({ message: 'No se encontraron productos con esos criterios' })
+      }
+      
+      res.json(rows)
     }
-
-    res.json(rows)
   } catch (err) {
     console.error('❌ Error en búsqueda de productos:', err)
     res.status(500).json({ error: 'Error del servidor', detalle: err.message })
