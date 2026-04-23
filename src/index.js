@@ -33,14 +33,16 @@ app.use(cors({
       'http://localhost:3000'
     ];
 
-    // Si el origen está en la lista o si es una petición local/Postman (origin es undefined)
-    if (!origin || allowedOrigins.includes(origin)) {
+    // ✅ Nueva lógica: Si el origen está en la lista O termina en .vercel.app
+    if (
+      !origin || 
+      allowedOrigins.includes(origin) || 
+      origin.endsWith('.vercel.app') // <--- Esto acepta cualquier subdominio de Vercel
+    ) {
       callback(null, true);
     } else {
-      // En lugar de lanzar un Error que rompa la API (500), 
-      // simplemente negamos el acceso CORS (esto es más limpio)
       console.warn(`⚠️ Intento de acceso bloqueado por CORS desde: ${origin}`);
-      callback(null, false); 
+      callback(null, false);
     }
   },
   credentials: true,
