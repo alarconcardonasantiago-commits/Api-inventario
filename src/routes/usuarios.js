@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
         const { nombre, correo, contraseña, rol, estado } = req.body;
         
         // Comprobar si existe
-        const [existe] = await pool.query('SELECT * FROM Usuarios WHERE correo = ?', [correo]);
+        const [existe] = await pool.query('SELECT * FROM usuarios WHERE correo = ?', [correo]);
         if (existe.length > 0) return res.status(400).json({ error: 'El correo electrónico ya se encuentra registrado' });
 
         const hashedPwd = await bcrypt.hash(contraseña, 10);
@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
 // ✅ Obtener usuario específico
 router.get('/:id', async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT id_usuario, nombre, correo, rol, estado FROM Usuarios WHERE id_usuario = ?', [req.params.id]);
+        const [rows] = await pool.query('SELECT id_usuario, nombre, correo, rol, estado FROM usuarios WHERE id_usuario = ?', [req.params.id]);
         if (rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' });
         res.json(rows[0]);
     } catch (error) {
@@ -54,7 +54,7 @@ router.put('/:id', async (req, res) => {
         const { nombre, correo, contraseña, rol, estado } = req.body;
         const userId = req.params.id;
         
-        let query = 'UPDATE Usuarios SET ';
+        let query = 'UPDATE usuarios SET ';
         const params = [];
         const updateFields = [];
 

@@ -6,7 +6,7 @@ const router = express.Router()
 // Obtener todos los proveedores
 router.get('/', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM Proveedores')
+    const [rows] = await pool.query('SELECT * FROM proveedores')
     res.json(rows)
   } catch (err) {
     console.error('Error al obtener proveedores:', err)
@@ -17,7 +17,7 @@ router.get('/', async (req, res) => {
 // Obtener un proveedor por ID
 router.get('/:id', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM Proveedores WHERE id_proveedor = ?', [req.params.id])
+    const [rows] = await pool.query('SELECT * FROM proveedores WHERE id_proveedor = ?', [req.params.id])
     if (rows.length === 0) return res.status(404).json({ error: 'Proveedor no encontrado' })
     res.json(rows[0])
   } catch (err) {

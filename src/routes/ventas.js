@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
 
     // 1. Insertar Encabezado
     const [ventaResult] = await connection.query(
-      'INSERT INTO Ventas (id_cliente, total, estado) VALUES (?, ?, ?)',
+      'INSERT INTO ventas (id_cliente, total, estado) VALUES (?, ?, ?)',
       [id_cliente || null, total, 'Completado']
     )
     const id_venta = ventaResult.insertId
@@ -70,7 +70,7 @@ router.post('/', async (req, res) => {
         // Omitimos "subtotal" porque es generada automáticamente.
         // Agregamos "precio_unitario" porque la base de datos lo exige (no tiene valor por defecto).
         await connection.query(
-          'INSERT INTO DetalleVenta (id_venta, id_instrumento, cantidad, precio_unitario) VALUES (?, ?, ?, ?)',
+          'INSERT INTO detalle_venta (id_venta, id_instrumento, cantidad, precio_unitario) VALUES (?, ?, ?, ?)',
           [id_venta, item.id_producto, item.cantidad, item.precio_unitario]
         )
 
