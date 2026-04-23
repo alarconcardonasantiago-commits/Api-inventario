@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const pool = mysql.createPool({
-  host: 'melodiainstrumental-alarconcardonasantiago-da9c.d.aivencloud.com', // <-- PUESTO A MANO DIRECTAMENTE PARA DEPURAR
+  host: process.env.DB_HOST,
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 12105,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
