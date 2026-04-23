@@ -19,22 +19,34 @@ const app = express()
 // ✅ CORS configurado para producción y desarrollo
 const allowedOrigins = [
   process.env.FRONTEND_URL,    // URL de Vercel en producción
-  'https://react-proyect-sena-adso.vercel.app',  // Creado directamente como respaldo seguro
+  'https://api-inventario-bpli.onrender.com',  // Creado directamente como respaldo seguro
   'http://localhost:5173',     // Vite dev server
   'http://localhost:3000',     // Fallback local
 ].filter(Boolean)
 
+// ✅ CORS configurado de forma segura pero flexible
 app.use(cors({
   origin: (origin, callback) => {
-    // Permitir requests sin origin (Postman, Railway health checks)
-    if (!origin) return callback(null, true)
-    if (allowedOrigins.includes(origin)) return callback(null, true)
-    callback(new Error(`CORS bloqueado para origin: ${origin}`))
+    const allowedOrigins = [
+      process.env.FRONTEND_URL,
+      'http://localhost:5173',
+      'http://localhost:3000'
+    ];
+
+    // Si el origen está en la lista o si es una petición local/Postman (origin es undefined)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      // En lugar de lanzar un Error que rompa la API (500), 
+      // simplemente negamos el acceso CORS (esto es más limpio)
+      console.warn(`⚠️ Intento de acceso bloqueado por CORS desde: ${origin}`);
+      callback(null, false); 
+    }
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-}))
+}));
 
 app.use(express.json())
 
