@@ -15,10 +15,10 @@ router.get('/', async (req, res) => {
         COALESCE(SUM(dv.cantidad), 0) as cantidad, 
         v.total, 
         v.estado
-      FROM Ventas v
-      LEFT JOIN Clientes c ON v.id_cliente = c.id_cliente
-      LEFT JOIN DetalleVenta dv ON v.id_venta = dv.id_venta
-      LEFT JOIN Productos p ON dv.id_instrumento = p.id_producto
+      FROM ventas v
+      LEFT JOIN clientes c ON v.id_cliente = c.id_cliente
+      LEFT JOIN detalle_venta dv ON v.id_venta = dv.id_venta
+      LEFT JOIN productos p ON dv.id_instrumento = p.id_producto
       GROUP BY v.id_venta
       ORDER BY v.id_venta DESC
     `)
@@ -35,8 +35,8 @@ router.get('/:id', async (req, res) => {
     const [rows] = await pool.query(`
       SELECT v.id_venta as id, DATE_FORMAT(v.fecha, '%Y-%m-%d') as fecha, v.total, v.estado,
              c.nombre AS cliente, c.correo, c.telefono
-      FROM Ventas v
-      LEFT JOIN Clientes c ON v.id_cliente = c.id_cliente
+      FROM ventas v
+      LEFT JOIN clientes c ON v.id_cliente = c.id_cliente
       WHERE v.id_venta = ?
     `, [req.params.id])
 
@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
 
         // Extraer lógica de stock
         await connection.query(
-          'UPDATE Productos SET stock = stock - ? WHERE id_producto = ?',
+          'UPDATE productos SET stock = stock - ? WHERE id_producto = ?',
           [item.cantidad, item.id_producto]
         )
       }
@@ -99,7 +99,7 @@ router.put('/:id', async (req, res) => {
   try {
     const { id_cliente, fecha, total, estado } = req.body
     
-    let query = 'UPDATE Ventas SET '
+    let query = 'UPDATE ventas SET '
     let params = []
     if (id_cliente !== undefined) { query += 'id_cliente=?, '; params.push(id_cliente) }
     if (fecha !== undefined) { query += 'fecha=?, '; params.push(fecha) }
@@ -121,7 +121,7 @@ router.put('/:id', async (req, res) => {
 // ✅ Eliminar una venta
 router.delete('/:id', async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM Ventas WHERE id_venta = ?', [req.params.id])
+    const [result] = await pool.query('DELETE FROM ventas WHERE id_venta = ?', [req.params.id])
     if (result.affectedRows === 0) return res.status(404).json({ error: 'Venta no encontrada' })
     res.json({ message: 'Venta eliminada correctamente' })
   } catch (err) {

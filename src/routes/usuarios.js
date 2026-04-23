@@ -7,7 +7,7 @@ const router = express.Router();
 // ✅ Obtener todos los usuarios
 router.get('/', async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT id_usuario, nombre, correo, rol, estado, fecha_creacion FROM Usuarios ORDER BY id_usuario DESC');
+        const [rows] = await pool.query('SELECT id_usuario, nombre, correo, rol, estado, fecha_creacion FROM usuarios ORDER BY id_usuario DESC');
         res.json(rows);
     } catch (error) {
         console.error('Error obteniendo usuarios:', error);
@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
         const hashedPwd = await bcrypt.hash(contraseña, 10);
         
         const [result] = await pool.query(
-            'INSERT INTO Usuarios (nombre, correo, contraseña, rol, estado) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO usuarios (nombre, correo, contraseña, rol, estado) VALUES (?, ?, ?, ?, ?)',
             [nombre, correo, hashedPwd, rol || 'empleado', estado || 'Activo']
         );
         res.status(201).json({ message: 'Usuario creado exitosamente', id: result.insertId });

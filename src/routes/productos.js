@@ -7,7 +7,7 @@ const router = express.Router()
 //Obtener todos los productos (público)
 router.get('/', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM Productos')
+    const [rows] = await pool.query('SELECT * FROM productos')
     res.json(rows)
   } catch (err) {
     console.error('❌ Error al obtener productos:', err)
@@ -26,12 +26,12 @@ router.get('/buscar', async (req, res) => {
 
     // Si no hay filtros, devolver todos los productos
     if (!nombre && !tipo) {
-      const [rows] = await pool.query('SELECT * FROM Productos')
+      const [rows] = await pool.query('SELECT * FROM productos')
       return res.json(rows)
     }
 
     // Consulta dinámica
-    let query = 'SELECT * FROM Productos WHERE 1=1'
+    let query = 'SELECT * FROM productos WHERE 1=1'
     const params = []
 
     if (nombre) {
@@ -60,7 +60,7 @@ router.get('/buscar', async (req, res) => {
 // Obtener producto por ID (público)
 router.get('/:id', async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM Productos WHERE id_producto = ?', [req.params.id])
+    const [rows] = await pool.query('SELECT * FROM productos WHERE id_producto = ?', [req.params.id])
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Producto no encontrado' })
     }
@@ -81,7 +81,7 @@ router.post('/', verifyToken, async (req, res) => {
     }
 
     const [result] = await pool.query(
-      'INSERT INTO Productos (nombre, tipo, precio, stock, id_proveedor) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO productos (nombre, tipo, precio, stock, id_proveedor) VALUES (?, ?, ?, ?, ?)',
       [nombre, tipo, precio, stock || 0, id_proveedor || null]
     )
 
@@ -98,7 +98,7 @@ router.put('/:id', verifyToken, async (req, res) => {
     const { nombre, tipo, precio, stock, id_proveedor } = req.body
 
     const [result] = await pool.query(
-      'UPDATE Productos SET nombre=?, tipo=?, precio=?, stock=?, id_proveedor=? WHERE id_producto=?',
+      'UPDATE productos SET nombre=?, tipo=?, precio=?, stock=?, id_proveedor=? WHERE id_producto=?',
       [nombre, tipo, precio, stock, id_proveedor, req.params.id]
     )
 
@@ -116,7 +116,7 @@ router.put('/:id', verifyToken, async (req, res) => {
 //Eliminar producto (solo administradores)
 router.delete('/:id', verifyToken, verifyAdmin, async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM Productos WHERE id_producto = ?', [req.params.id])
+    const [result] = await pool.query('DELETE FROM productos WHERE id_producto = ?', [req.params.id])
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: 'Producto no encontrado' })

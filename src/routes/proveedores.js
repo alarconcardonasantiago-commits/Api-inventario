@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
   try {
     const { nombre, contacto, telefono, direccion } = req.body
     const [result] = await pool.query(
-      'INSERT INTO Proveedores (nombre, contacto, telefono, direccion) VALUES (?, ?, ?, ?)',
+      'INSERT INTO proveedores (nombre, contacto, telefono, direccion) VALUES (?, ?, ?, ?)',
       [nombre, contacto, telefono, direccion]
     )
     res.status(201).json({ message: 'Proveedor agregado', id: result.insertId })
@@ -46,7 +46,7 @@ router.put('/:id', async (req, res) => {
   try {
     const { nombre, contacto, telefono, direccion } = req.body
     const [result] = await pool.query(
-      'UPDATE Proveedores SET nombre=?, contacto=?, telefono=?, direccion=? WHERE id_proveedor=?',
+      'UPDATE proveedores SET nombre=?, contacto=?, telefono=?, direccion=? WHERE id_proveedor=?',
       [nombre, contacto, telefono, direccion, req.params.id]
     )
     if (result.affectedRows === 0) return res.status(404).json({ error: 'Proveedor no encontrado' })
@@ -60,7 +60,7 @@ router.put('/:id', async (req, res) => {
 // Eliminar proveedor
 router.delete('/:id', async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM Proveedores WHERE id_proveedor = ?', [req.params.id])
+    const [result] = await pool.query('DELETE FROM proveedores WHERE id_proveedor = ?', [req.params.id])
     if (result.affectedRows === 0) return res.status(404).json({ error: 'Proveedor no encontrado' })
     res.json({ message: 'Proveedor eliminado correctamente' })
   } catch (err) {

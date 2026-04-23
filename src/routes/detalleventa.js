@@ -9,9 +9,9 @@ router.get('/', async (req, res) => {
       SELECT dv.id_detalle, dv.id_venta, dv.id_instrumento, dv.cantidad, dv.subtotal,
              i.nombre AS instrumento, i.precio AS precio_unitario,
              v.fecha AS fecha_venta, v.total AS total_venta
-      FROM DetalleVenta dv
-      LEFT JOIN Instrumentos i ON dv.id_instrumento = i.id_instrumento
-      LEFT JOIN Ventas v ON dv.id_venta = v.id_venta
+      FROM detalle_venta dv
+      LEFT JOIN instrumentos i ON dv.id_instrumento = i.id_instrumento
+      LEFT JOIN ventas v ON dv.id_venta = v.id_venta
       ORDER BY dv.id_detalle DESC
     `)
     res.json(rows)
@@ -28,9 +28,9 @@ router.get('/:id', async (req, res) => {
       SELECT dv.id_detalle, dv.id_venta, dv.id_instrumento, dv.cantidad, dv.subtotal,
              i.nombre AS instrumento, i.precio AS precio_unitario,
              v.fecha AS fecha_venta, v.total AS total_venta
-      FROM DetalleVenta dv
-      LEFT JOIN Instrumentos i ON dv.id_instrumento = i.id_instrumento
-      LEFT JOIN Ventas v ON dv.id_venta = v.id_venta
+      FROM detalle_venta dv
+      LEFT JOIN instrumentos i ON dv.id_instrumento = i.id_instrumento
+      LEFT JOIN ventas v ON dv.id_venta = v.id_venta
       WHERE dv.id_detalle = ?
     `, [req.params.id])
 
@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
   try {
     const { id_venta, id_instrumento, cantidad, subtotal } = req.body
     const [result] = await pool.query(
-      'INSERT INTO DetalleVenta (id_venta, id_instrumento, cantidad, subtotal) VALUES (?, ?, ?, ?)',
+      'INSERT INTO detalle_venta (id_venta, id_instrumento, cantidad, subtotal) VALUES (?, ?, ?, ?)',
       [id_venta, id_instrumento, cantidad, subtotal]
     )
     res.status(201).json({ message: 'Detalle de venta agregado correctamente', id: result.insertId })
@@ -62,7 +62,7 @@ router.put('/:id', async (req, res) => {
   try {
     const { id_venta, id_instrumento, cantidad, subtotal } = req.body
     const [result] = await pool.query(
-      'UPDATE DetalleVenta SET id_venta=?, id_instrumento=?, cantidad=?, subtotal=? WHERE id_detalle=?',
+      'UPDATE detalle_venta SET id_venta=?, id_instrumento=?, cantidad=?, subtotal=? WHERE id_detalle=?',
       [id_venta, id_instrumento, cantidad, subtotal, req.params.id]
     )
     if (result.affectedRows === 0) return res.status(404).json({ error: 'Detalle de venta no encontrado' })
@@ -76,7 +76,7 @@ router.put('/:id', async (req, res) => {
 // ✅ Eliminar un detalle de venta
 router.delete('/:id', async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM DetalleVenta WHERE id_detalle = ?', [req.params.id])
+    const [result] = await pool.query('DELETE FROM detalle_venta WHERE id_detalle = ?', [req.params.id])
     if (result.affectedRows === 0) return res.status(404).json({ error: 'Detalle de venta no encontrado' })
     res.json({ message: 'Detalle de venta eliminado correctamente' })
   } catch (err) {
