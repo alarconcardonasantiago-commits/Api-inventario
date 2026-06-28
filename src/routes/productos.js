@@ -124,15 +124,15 @@ router.get('/:id', async (req, res) => {
 // Agregar producto (solo usuarios autenticados)
 router.post('/', verifyToken, async (req, res) => {
   try {
-    const { nombre, tipo, precio, stock, id_proveedor } = req.body
+    const { nombre, tipo, precio, stock, id_proveedor, descripcion, marca, estado, imagen } = req.body
 
     if (!nombre || !precio) {
       return res.status(400).json({ error: 'El nombre y el precio son obligatorios' })
     }
 
     const [result] = await pool.query(
-      'INSERT INTO productos (nombre, tipo, precio, stock, id_proveedor) VALUES (?, ?, ?, ?, ?)',
-      [nombre, tipo, precio, stock || 0, id_proveedor || null]
+      'INSERT INTO productos (nombre, tipo, precio, stock, id_proveedor, descripcion, marca, estado, imagen) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [nombre, tipo, precio, stock || 0, id_proveedor || null, descripcion || null, marca || null, estado || 'Nuevo', imagen || null]
     )
 
     res.status(201).json({ message: '✅ Producto agregado correctamente', id: result.insertId })
@@ -145,11 +145,11 @@ router.post('/', verifyToken, async (req, res) => {
 //Actualizar producto (solo usuarios autenticados)
 router.put('/:id', verifyToken, async (req, res) => {
   try {
-    const { nombre, tipo, precio, stock, id_proveedor } = req.body
+    const { nombre, tipo, precio, stock, id_proveedor, descripcion, marca, estado, imagen } = req.body
 
     const [result] = await pool.query(
-      'UPDATE productos SET nombre=?, tipo=?, precio=?, stock=?, id_proveedor=? WHERE id_producto=?',
-      [nombre, tipo, precio, stock, id_proveedor, req.params.id]
+      'UPDATE productos SET nombre=?, tipo=?, precio=?, stock=?, id_proveedor=?, descripcion=?, marca=?, estado=?, imagen=? WHERE id_producto=?',
+      [nombre, tipo, precio, stock, id_proveedor, descripcion || null, marca || null, estado || 'Nuevo', imagen || null, req.params.id]
     )
 
     if (result.affectedRows === 0) {
