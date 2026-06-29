@@ -149,7 +149,7 @@ router.put('/:id', verifyToken, async (req, res) => {
 
     const [result] = await pool.query(
       'UPDATE productos SET nombre=?, tipo=?, precio=?, stock=?, id_proveedor=?, descripcion=?, marca=?, estado=?, imagen=? WHERE id_producto=?',
-      [nombre, tipo, precio, stock, id_proveedor, descripcion || null, marca || null, estado || 'Nuevo', imagen || null, req.params.id]
+      [nombre, tipo, precio, stock, id_proveedor || null, descripcion || null, marca || null, estado || 'Nuevo', imagen || null, req.params.id]
     )
 
     if (result.affectedRows === 0) {

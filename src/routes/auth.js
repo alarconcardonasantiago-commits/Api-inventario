@@ -16,7 +16,7 @@ router.post('/register', async (req, res) => {
     const { nombre, correo, contraseña, rol } = req.body
 
     // Verificar si el correo ya está registrado
-    const [existe] = await pool.query('SELECT * FROM Usuarios WHERE correo = ?', [correo])
+    const [existe] = await pool.query('SELECT * FROM usuarios WHERE correo = ?', [correo])
     if (existe.length > 0) {
       return res.status(400).json({ error: 'El correo ya está registrado' })
     }
@@ -26,7 +26,7 @@ router.post('/register', async (req, res) => {
 
     // Insertar usuario en la base de datos
     const [result] = await pool.query(
-      'INSERT INTO Usuarios (nombre, correo, contraseña, rol) VALUES (?, ?, ?, ?)',
+      'INSERT INTO usuarios (nombre, correo, contraseña, rol) VALUES (?, ?, ?, ?)',
       [nombre, correo, hashedPassword, rol || 'empleado']
     )
 
@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
     const { correo, contraseña } = req.body
 
     // Buscar el usuario por correo
-    const [rows] = await pool.query('SELECT * FROM Usuarios WHERE correo = ?', [correo])
+    const [rows] = await pool.query('SELECT * FROM usuarios WHERE correo = ?', [correo])
     if (rows.length === 0) return res.status(404).json({ error: 'Usuario no encontrado' })
 
     const usuario = rows[0]
@@ -68,6 +68,7 @@ router.post('/login', async (req, res) => {
       usuario: {
         id: usuario.id_usuario,
         nombre: usuario.nombre,
+        correo: usuario.correo,
         rol: usuario.rol
       }
     })
