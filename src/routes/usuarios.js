@@ -18,7 +18,8 @@ router.get('/', async (req, res) => {
 // ✅ Crear un usuario nuevo (similar a registro)
 router.post('/', async (req, res) => {
     try {
-        const { nombre, correo, contraseña, rol, estado } = req.body;
+        const { nombre, contraseña, rol, estado } = req.body;
+        const correo = req.body.correo ? req.body.correo.trim() : '';
         
         // Comprobar si existe
         const [existe] = await pool.query('SELECT * FROM usuarios WHERE correo = ?', [correo]);

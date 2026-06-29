@@ -40,7 +40,8 @@ router.post('/register', async (req, res) => {
 // ✅ Login de usuario
 router.post('/login', async (req, res) => {
   try {
-    const { correo, contraseña } = req.body
+    const { contraseña } = req.body
+    const correo = req.body.correo ? req.body.correo.trim() : '';
 
     // Buscar el usuario por correo
     const [rows] = await pool.query('SELECT * FROM usuarios WHERE correo = ?', [correo])
